@@ -79,7 +79,7 @@ namespace LobbyClient
         //interface on mouse enter.
         public void OnPointerEnter(PointerEventData eventData)
         {
-            isHiglighted= true;
+            isHighlighted= true;
             audioSource.PlayOneShot(audioClipHover);
             ButtonEvent(highlighted);    
         }
@@ -87,7 +87,7 @@ namespace LobbyClient
         //interface on mouse enter.
         public void OnPointerExit(PointerEventData eventData)
         {
-            isHiglighted = false;
+            isHighlighted = false;
             ButtonEvent(normal);
         }
 
