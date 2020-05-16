@@ -42,6 +42,7 @@ namespace LobbyClient
 
         void Start()
         {
+            currentButton = normal;
             //Loading mixer from Assets/Resources/Sounds
             AudioMixer mixer = Resources.Load("Sounds/_Mixer") as AudioMixer;
 
