@@ -17,15 +17,15 @@ namespace LobbyClient
         public float resetTimeFix = 0.5f;
         [Space(10)]
 
-        [Header("Button Layers")]
+        [Header("BUTTON LAYERS")]
         public GameObject normal;
         public GameObject highlighted;
         public GameObject clicked;
         public GameObject disable;
-        public GameObject currentButton;
+        private GameObject currentButton;
         [Space(10)]
 
-        [Header("TIMER EVENT")]
+        [Header("BUTTON EVENT")]
         public UnityEvent buttonAction;
 
         private IEnumerator FixClick;
@@ -42,54 +42,57 @@ namespace LobbyClient
 
         void Start()
         {
+            //Loading mixer from Assets/Resources/Sounds
             AudioMixer mixer = Resources.Load("Sounds/_Mixer") as AudioMixer;
 
             audioSource = this.gameObject.AddComponent<AudioSource>();
+            //setting the audio source to use the UI exposed variables from the mixer;
             audioSource.outputAudioMixerGroup = mixer.FindMatchingGroups("UI")[0];
+            //Loading clips from Assets/Resources/Sounds
             audioClipHover = Resources.Load("Sounds/Hover") as AudioClip;
             audioClipClick = Resources.Load("Sounds/Click") as AudioClip;
-
+            
+            //Grab and Set all text to match inspector set value
             normalText = normal.GetComponentInChildren<TextMeshProUGUI>();
             highlightText = highlighted.GetComponentInChildren<TextMeshProUGUI>();
             clickText = clicked.GetComponentInChildren<TextMeshProUGUI>();
             disableText = disable.GetComponentInChildren<TextMeshProUGUI>();
-
             normalText.text = buttonName;
             highlightText.text = buttonName;
             clickText.text = buttonName;
             disableText.text = buttonName;
         }
+        
+        //inteface mouse clicked
         public void OnPointerClick(PointerEventData eventData)
         {
             audioSource.PlayOneShot(audioClipClick);
 
             ButtonEvent(clicked);
-
+            //starting short counter to reset button after click.
             FixClick = clickFixDelay();   
             StartCoroutine(FixClick);
-
+            //Invokes the inspector set events of this button
             buttonAction.Invoke();
         }
-
+        
+        //interface on mouse enter.
         public void OnPointerEnter(PointerEventData eventData)
         {
+            isHiglighted= true;
             audioSource.PlayOneShot(audioClipHover);
-            ButtonEvent(highlighted);
+            ButtonEvent(highlighted);    
         }
-
+        
+        //interface on mouse enter.
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (isHighlighted)
-            {
-                ButtonEvent(highlighted);
-            }
-            else
-            {
-                ButtonEvent(normal);
-            }           
+            isHiglighted = false;
+            ButtonEvent(normal);
         }
 
         #region ButtonFix
+        //The following Ienumerator waits for the inspector set fix time to reset clicked buttons to normal or highlighted.
         private IEnumerator clickFixDelay()
         {
             yield return new WaitForSecondsRealtime(resetTimeFix);
@@ -104,7 +107,8 @@ namespace LobbyClient
             yield return false;
         }
         #endregion
-
+        
+        //Method to alternate previous button state to inactive and the new one to active.
         private void ButtonEvent(GameObject gO)
         {
             currentButton.SetActive(false);
